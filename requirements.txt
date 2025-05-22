@@ -1,0 +1,2 @@
+drissionpage>=4.1.0.18
+fastmcp>=2.4.0
