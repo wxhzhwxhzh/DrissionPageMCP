@@ -7,8 +7,9 @@
 '''
 # mcp配置
 "DrissionPageMCP": {
-      "command": "python",
+      "command": "uv",
       "args": [        
+        "run",
         "D:\\test10\\DrssionPageMCP\\main.py"
       ]
     }

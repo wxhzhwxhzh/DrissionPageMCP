@@ -1,73 +1,84 @@
 # DrissionPage MCP Server
 
-基于DrissionPage和FastMCP的浏览器自动化MCP服务器，提供丰富的浏览器操作API。
+基于DrissionPage和FastMCP的浏览器自动化MCP服务器，提供丰富的浏览器操作API供AI调用。
 
-## 功能特性
+## 项目简介
+![logo](img/DrissionPageMCP-logo.png)
 
-- 浏览器控制：打开浏览器、管理标签页
-- 元素操作：点击元素、输入文本、获取元素HTML
-- JavaScript执行：在页面中执行任意JavaScript代码
-- CDP协议支持：直接调用Chrome DevTools协议
-- 页面导航：页面上下滚动、等待加载
-- 截图功能：获取当前页面截图
-- 元素转换：将HTML元素转换为DrissionPage定位表达式
+DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化MCP server服务器，它提供了一系列强大的浏览器操作 API，让您能够轻松通过AI实现网页自动化操作。
 
-## 安装
+### 主要特性
 
-```bash
-pip install -r requirements.txt
+- 支持浏览器的打开、关闭和连接管理
+- 提供丰富的页面元素操作方法
+- 支持 JavaScript 代码执行
+- 支持 CDP 协议操作
+- 提供便捷的文件下载功能
+- 支持键盘按键模拟
+- 支持页面截图功能
+
+#### Python要求
+- Python >= 3.9
+- pip（最新版本）
+- uv （最新版本）
+
+
+#### 浏览器要求
+- Chrome 浏览器（推荐 90 及以上版本）
+
+
+#### 必需的Python包
+- drissionpage >= 4.1.0.18
+- fastmcp >= 2.4.0
+- uv
+
+## 安装说明
+把本仓库git clone到本地，核心文件是main.py：
+
+### 安装到Cursor编辑器
+
+![安装说明](img/install_to_Cursor1.png)
+![安装说明](img/install_to_cursor2.png)
+
+### 安装到vscode编辑器
+
+![安装说明](img/install_to_vscode0.png)
+![安装说明](img/install_to_vscode1.png)
+![安装说明](img/install_to_vscode2.png)
+
+
+请将以下配置代码粘贴到编辑器的`mcpServers`设置中（请填写`你自己电脑上 main.py 文件的绝对路径`）：
+
+```json
+{
+  "mcpServers": {
+    "DrssionPageMCP": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "D:\\test10\\DrssionPageMCP\\main.py"
+      ]
+    }
+  }
+}
 ```
 
-依赖项：
-- drissionpage>=4.1.0.18
-- fastmcp>=2.4.0
+注意事项：
+- 请根据实际路径修改`args`中的路径
+- Windows中路径中的反斜杠需要转义（使用`\\`）
+- 确保`uv`命令在系统PATH中可用
 
-## 快速开始
 
-1. 启动MCP服务器：
-```bash
-python main.py
-```
+## 调试命令
 
-2. 使用示例：
-```python
-# 打开浏览器并访问网页
-browser_open("https://example.com")
+调试  
+npx -y @modelcontextprotocol/inspector uv run D:\\test10\\DrssionPageMCP\\main.py
 
-# 点击页面元素
-element_click("//button[@id='submit']")
+## 更新日志
 
-# 在输入框中输入文本
-element_input("//input[@name='username']", "testuser")
+### v0.1.0
 
-# 执行JavaScript
-run_js("return document.title")
-```
-
-## API文档
-
-### 浏览器控制
-- `browser_open(url: str = "")`: 打开浏览器，可选指定初始URL
-- `open_tab(url: str = "")`: 在新标签页打开URL
-
-### 元素操作
-- `element_click(element_xpath: str)`: 点击指定XPath元素
-- `element_input(element_xpath: str, input_value: str)`: 向元素输入文本
-- `get_current_tab_element_html(element_xpath: str)`: 获取元素HTML
-
-### 页面控制
-- `page_down()`: 向下翻页
-- `page_up()`: 向上翻页
-- `wait(a: int)`: 等待指定秒数
-
-### 高级功能
-- `run_js(js_code: str)`: 执行JavaScript代码
-- `run_cdp(cmd: str, **cmd_args)`: 执行CDP协议命令
-- `get_current_tab_screenshot(path: str = ".")`: 获取页面截图
-
-## 注意事项
-
-1. 确保已安装Chrome或Chromium浏览器
-2. 首次运行时可能需要下载浏览器驱动
-3. 部分功能需要浏览器支持CDP协议
-4. 使用前请确保浏览器未在其他地方被占用
+- 初始版本发布
+- 实现基本的浏览器控制功能
+- 提供元素操作 API
