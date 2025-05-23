@@ -31,7 +31,43 @@ mcp = FastMCP("DrissionPageMCP", log_level="ERROR")
 class DP:
     browser:Chromium=None
     cdp_event_data=[]
+    listener_data=[]
     Drissionpage_python_code=None
+ 
+    mime_types = [
+    # 文本类
+    "text/html",
+    "text/css",
+    "text/javascript",
+    "application/javascript",
+    "text/plain",
+    "text/xml",
+    "text/csv",
+    "application/json",
+
+    # 应用类
+    "application/octet-stream",
+    "application/zip",
+    "application/pdf",
+    "application/x-www-form-urlencoded",
+    "multipart/form-data",
+    "application/xml",
+
+    # 图片类
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/svg+xml",
+    "image/x-icon",
+
+    # 音视频类
+    "audio/mpeg",
+    "audio/ogg",
+    "video/mp4",
+    "video/webm",
+    "video/ogg"
+]
 
 def browser_info(b:Chromium) -> dict:
     """获取浏览器的信息"""
@@ -239,6 +275,50 @@ def get_cdp_event_data() -> list:
     """获取CDP事件回调函数收集到的数据"""
     return DP.cdp_event_data    
 
+@mcp.tool()
+def response_received_listener(mimeType: str, url_include: str=".") -> None:
+    '''
+    开启监听网页接收的数据包,
+    mimeType: 需要监听的接收的数据包的mimeType类型
+    url_include: 需要监听的接收的数据包的url包含的关键字
+
+    '''
+    t=DP.browser.latest_tab
+ 
+    if mimeType not in DP.mime_types:
+        # 如果mimeType不在列表中，返回错误信息
+        return f" {mimeType} 错误！请在{DP.mime_types}列表中选择mimeType类型"
+                   
+  
+    
+    t.run_cdp("Network.enable")
+
+    def r(**event):
+        _url=event.get("response", {}).get("url", "")
+        _mimeType=event.get("response", {}).get("mimeType", "")
+     
+        
+        if mimeType in _mimeType :      
+                if url_include in _url:
+                    DP.listener_data.append({"event_name": "Network.responseReceived", "event_data": event})               
+       
+    t.driver.set_callback("Network.responseReceived", r)
+    
+    return f"开启监听网页接收的数据包, url包含关键字：{url_include}，mimeType：{mimeType}"    
+
+@mcp.tool()
+def response_received_listener_stop():
+    """关闭监听网页发送的数据包"""
+    t=DP.browser.latest_tab
+    t.run_cdp("Network.disable")
+    return f"监听网页发送的数据包关闭成功 Network.disable"
+
+@mcp.tool()
+def get_response_received_listener_data() -> list:
+    """获取监听到的数据,返回数据列表"""
+    return DP.listener_data  
+
+
 
 @mcp.tool()
 def get_current_tab_screenshot(path:str=".") -> bytes:
@@ -340,7 +420,7 @@ def get_dom_tree(depth:int) -> str:
     tab=DP.browser.latest_tab
     tab.run_cdp("DOM.enable")
     # 获取DOM树
-    result=tab.run_cdp("DOM.getDocument",depth=2)
+    result=tab.run_cdp("DOM.getDocument",depth=depth)
     return result
 
 @mcp.tool()

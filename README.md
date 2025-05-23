@@ -16,6 +16,7 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 - 提供便捷的文件下载功能
 - 支持键盘按键模拟
 - 支持页面截图功能
+- 增加 网页后台监听数据包的功能
 
 #### Python要求
 - Python >= 3.9
@@ -76,6 +77,9 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 npx -y @modelcontextprotocol/inspector uv run D:\\test10\\DrssionPageMCP\\main.py
 
 ## 更新日志
+
+### v0.1.2
+增加 网页后台监听数据包的功能
 
 ### v0.1.0
 
