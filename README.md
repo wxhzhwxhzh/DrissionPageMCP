@@ -1,4 +1,4 @@
-# DrissionPage MCP Server
+# DrissionPage MCP Server -- 骚神出品
 
 基于DrissionPage和FastMCP的浏览器自动化MCP服务器，提供丰富的浏览器操作API供AI调用。
 
@@ -17,6 +17,7 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 - 支持键盘按键模拟
 - 支持页面截图功能
 - 增加 网页后台监听数据包的功能
+- 增加自动上传下载文件功能
 
 #### Python要求
 - Python >= 3.9
@@ -64,20 +65,39 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
   }
 }
 ```
+新增mcp配置 ，填写下面的配置：
+``` json
+"DrssionPageMCP": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "run",
+        "D:\\test10\\DrssionPageMCP\\main.py"
+      ]
+    } 
+```
 
 注意事项：
 - 请根据实际路径修改`args`中的路径
 - Windows中路径中的反斜杠需要转义（使用`\\`）
 - 确保`uv`命令在系统PATH中可用
+- [《MCP安装参考教程》](https://docs.trae.ai/ide/model-context-protocol)
 
 
 ## 调试命令
 
-调试  
+调试
+```
 npx -y @modelcontextprotocol/inspector uv run D:\\test10\\DrssionPageMCP\\main.py
+```
+或者
+```
+mcp dev  D:\\test10\\DrssionPageMCP\\main.py
+```
 
 ## 更新日志
-
+### v0.1.3
+增加 自动上传下载文件功能
 ### v0.1.2
 增加 网页后台监听数据包的功能
 
