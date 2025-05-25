@@ -134,12 +134,21 @@ class DrissionPageMCP():
         return elements
     
     def click_by_xpath(self, xpath: str) -> dict:
-        """通过xpath点击当前标签页中某个元素,最好先判断元素是否存在"""
+        """通过xpath点击当前标签页中某个元素,最好先获取页面dom信息,再决定Xpath的写法"""
         
         locator = f"xpath:{xpath}"
         element = self.browser.latest_tab.ele(locator, timeout=3)
         result = {"locator": locator, "element": str(element), "click_result": element.click()}
         return result
+    
+    def click_by_containing_text(self, content: str) -> dict:
+        """通过包含文本的xpath点击当前标签页中某个元素,最好先获取页面dom信息,再决定Xpath的写法"""
+        
+        locator = f"xpath://*[@contains(text(),'{content}')]"
+        element = self.browser.latest_tab.ele(locator, timeout=3)
+        result = {"locator": locator, "element": str(element), "click_result": element.click()}
+        return result
+        
     
     def input_by_xapth(self, xpath: str, input_value: str, clear_first: bool = True) -> Any:
         """通过xpath给当前标签页中某个元素输入内容，最好先判断元素是否存在
@@ -362,7 +371,13 @@ class DrissionPageMCP():
         except Exception as e:
             return f"{tab.title} 网页发送 {key} 键失败"
     
-
+    def getSimplifiedDomTree(self) -> dict:
+        """获取当前标签页的简化版DOM树"""
+        from CodeBox import domTreeToJson
+        tab = self.browser.latest_tab
+        dom_tree = tab.run_js(domTreeToJson)
+        return dom_tree
+ 
 
 
 
@@ -381,6 +396,7 @@ mcp.add_tool(b.upload_file)
 mcp.add_tool(b.send_enter)
 mcp.add_tool(b.getInputElementsInfo)
 mcp.add_tool(b.click_by_xpath)
+mcp.add_tool(b.click_by_containing_text)
 mcp.add_tool(b.input_by_xapth)
 mcp.add_tool(b.get_body_text)
 mcp.add_tool(b.run_js)
@@ -393,7 +409,8 @@ mcp.add_tool(b.get_response_listener_data)
 mcp.add_tool(b.get_current_tab_screenshot)
 mcp.add_tool(b.get_current_tab_screenshot_as_file)
 mcp.add_tool(b.get_current_tab_info) 
-mcp.add_tool(b.send_key)   
+mcp.add_tool(b.send_key)
+mcp.add_tool(b.getSimplifiedDomTree) 
 
 
 
