@@ -38,9 +38,9 @@ class DrissionPageMCP():
         return "1.0.3"
     async def connect_or_open_browser(self, config: dict) -> dict:
         """
-        用DrissionPage 打开或接管已打开的浏览器，参数通过字典传递。如果url不为空则打开指定网址。
+        用DrissionPage 打开或接管已打开的浏览器，参数通过字典传递。
         参数:
-            config (dict): 可选键包括 url、debug_port、browser_path、headless
+            config (dict): 可选键包括 、debug_port、browser_path、headless
         返回:
             dict: 浏览器信息
         """
@@ -52,9 +52,7 @@ class DrissionPageMCP():
             co.headless(True)
 
         self.browser = Chromium(co)
-        tab = self.browser.latest_tab
-        if config.get("url"):
-            tab.get(config["url"])
+        tab = self.browser.latest_tab        
 
         return {
             "browser_address": self.browser._chromium_options.address,
@@ -70,6 +68,13 @@ class DrissionPageMCP():
         """等待a秒"""
         self.browser.latest_tab.wait(a)
         return f"等待{a}秒成功"
+    
+    def get(self,url:str)->str:
+        """在当前标签页打开一个网址"""
+        self.lastest_tab.get(url)
+        tab=self.browser.latest_tab
+        return f'{tab.title} {tab.tab_id} {tab.url} 已经打开'
+        
     
     #region 上传和下载
     def download_file(self, url: str, path: str, rename: str) -> str:
@@ -96,9 +101,8 @@ class DrissionPageMCP():
         Returns:
             str: 上传结果信息，如果元素不存在则返回错误信息
         """
-        tab:ChromiumTab = self.lastest_tab
         x="//input[@type='file']"
-        t=self.lastest_tab
+        t:ChromiumTab=self.lastest_tab
         if e:= t(f"xpath:{x}"):
             t.set.upload_files(file_path)
             e.click(by_js=True)
@@ -141,13 +145,40 @@ class DrissionPageMCP():
         result = {"locator": locator, "element": str(element), "click_result": element.click()}
         return result
     
-    def click_by_containing_text(self, content: str) -> dict:
-        """通过包含文本的xpath点击当前标签页中某个元素,最好先获取页面dom信息,再决定Xpath的写法"""
+    def click_by_containing_text(self, content: str, index: int = None) -> any:
+        """
+        根据包含指定文本的方式点击网页元素。
         
-        locator = f"xpath://*[@contains(text(),'{content}')]"
-        element = self.browser.latest_tab.ele(locator, timeout=3)
-        result = {"locator": locator, "element": str(element), "click_result": element.click()}
-        return result
+        参数：
+            content: 要查找的文本内容。
+            index: 当匹配到多个元素时指定要点击的索引，默认不指定。
+
+        返回：
+            点击结果说明，或错误提示。
+        """
+        
+        # 获取包含指定文本的所有元素，等待最多 3 秒
+        elements = self.browser.latest_tab.eles(content, timeout=3)
+
+        # 如果没有匹配到任何元素，返回错误提示
+        if len(elements) == 0:
+            return f"元素{content}不存在，需要getInputElementsInfo先获取元素信息"
+        
+        # 如果只找到一个元素，直接点击它
+        if len(elements) == 1:
+            self.lastest_tab(content).click()
+            return f" 点击成功"
+        
+        # 如果找到多个元素
+        if len(elements) > 1:
+            # 如果未指定 index，提示用户提供索引
+            if index is None:
+                return f"元素{content}存在多个，请调整 index 参数，index=0表示第一个元素，{elements}"
+            else:
+                # 根据指定索引点击对应的元素
+                elements[index].click()
+                return f" 点击成功"
+  
         
     
     def input_by_xapth(self, xpath: str, input_value: str, clear_first: bool = True) -> Any:
@@ -222,7 +253,7 @@ class DrissionPageMCP():
         """
         # b=Chromium(debug_port)
         def r(**event):
-            DP.cdp_event_data.append({"event_name": event_name, "event_data": event})
+            self.cdp_event_data.append({"event_name": event_name, "event_data": event})
 
         try:
             self.browser.latest_tab.driver.set_callback(event_name, r)
@@ -238,7 +269,8 @@ class DrissionPageMCP():
 
     #region 监听网页接收的数据包  
     
-    def response_listener_start(self,
+    def get_url_with_response_listener(self,
+        tab_url: str,
         mimeType: Literal[
             # 文本类
             "text/html",
@@ -272,14 +304,16 @@ class DrissionPageMCP():
             "video/webm",
             "video/ogg"
         ],
-        url_include: str = "."
+        url_include: str = "."        
     ) -> any:
         '''
-        开启监听网页接收的数据包,
+        开启一个新的标签页，设置监听，访问tab_url,
+        tab_url: 被监听的标签页的url
         mimeType: 需要监听的接收的数据包的mimeType类型
         url_include: 需要监听的接收的数据包的url包含的关键字
+        refresh: 是否刷新页面,
         '''
-        t = self.browser.latest_tab      
+        t = self.browser.new_tab(tab_url)      
 
         t.run_cdp("Network.enable")
 
@@ -294,8 +328,9 @@ class DrissionPageMCP():
                 })
         
         t.driver.set_callback("Network.responseReceived", r)
+        t.get(tab_url)
         
-        return f"开启监听网页接收的数据包, url包含关键字：{url_include}，mimeType：{mimeType}"
+        return f"开启监听{tab_url}, 数据包url包含关键字：{url_include}，mimeType：{mimeType}"
     
 
     
@@ -378,10 +413,44 @@ class DrissionPageMCP():
         dom_tree = tab.run_js(domTreeToJson)
         return dom_tree
  
+    #region 拖动
 
-
-
-
+    def move_to(self,xpath:str) -> dict:
+        """鼠标移动悬停到指定xpath的元素上"""
+        tab = self.browser.latest_tab
+        locator = f"xpath:{xpath}"
+        element = tab.ele(locator, timeout=3)
+        if element:
+            element.hover()
+            result = {"locator": locator, "element": str(element)}
+            return result
+        else:
+            return f"元素{locator}不存在，需要getSimplifiedDomTree先获取元素信息"
+    def drag(self,xpath:str, offset_x: int, offset_y: int, duration: int = 1000) -> dict:
+    
+        """
+        将元素拖动到指定偏移位置
+        
+        Args:
+            xpath: 要拖动的元素xpath路径
+            offset_x: x轴偏移量(像素)
+            offset_y: y轴偏移量(像素)
+            duration: 拖动持续时间(毫秒)，默认为1000
+        
+        Returns:
+            dict: 包含偏移量和持续时间的字典，格式为{"offset_x": int, "offset_y": int, "duration": int}
+            或 str: 当元素不存在时返回错误信息
+        
+        Raises:
+            无显式抛出异常，但内部可能因元素不存在而返回错误信息
+        """
+        tab = self.browser.latest_tab
+        if e:=tab.ele(f'xpath:{xpath}', timeout=3):
+            tab.actions.move_to(e).wait(0.5).hold().move(offset_x, offset_y).release()
+            result = {"offset_x": offset_x, "offset_y": offset_y, "duration": duration}
+            return result
+        else:
+            return f"元素{xpath}不存在，需要getSimplifiedDomTree先获取元素信息"
 
 #region 初始化mcp
 mcp = FastMCP("DrissionPageMCP", log_level="ERROR",instructions=提示)
@@ -391,6 +460,7 @@ mcp.add_tool(b.get_version)
 mcp.add_tool(b.connect_or_open_browser)
 mcp.add_tool(b.new_tab)
 mcp.add_tool(b.wait)
+mcp.add_tool(b.get)
 mcp.add_tool(b.download_file)
 mcp.add_tool(b.upload_file)
 mcp.add_tool(b.send_enter)
@@ -403,7 +473,7 @@ mcp.add_tool(b.run_js)
 mcp.add_tool(b.run_cdp)
 mcp.add_tool(b.listen_cdp_event)
 mcp.add_tool(b.get_cdp_event_data)
-mcp.add_tool(b.response_listener_start)
+mcp.add_tool(b.get_url_with_response_listener)
 mcp.add_tool(b.response_listener_stop)
 mcp.add_tool(b.get_response_listener_data)
 mcp.add_tool(b.get_current_tab_screenshot)
@@ -411,6 +481,14 @@ mcp.add_tool(b.get_current_tab_screenshot_as_file)
 mcp.add_tool(b.get_current_tab_info) 
 mcp.add_tool(b.send_key)
 mcp.add_tool(b.getSimplifiedDomTree) 
+
+mcp.add_tool(b.move_to)
+mcp.add_tool(b.drag)
+
+#region 保存数据到sqlite
+from ToolBox import save_dict_to_sqlite
+mcp.add_tool(save_dict_to_sqlite)
+
 
 
 
