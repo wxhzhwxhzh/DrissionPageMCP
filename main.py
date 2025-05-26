@@ -59,21 +59,21 @@ class DrissionPageMCP():
             "latest_tab_title": tab.title,
             "latest_tab_id": tab.tab_id,
         }
-    def new_tab(self, url: str) -> str:
+    async def new_tab(self, url: str) -> str:
         """用DrissionPage 控制的浏览器,打开新标签页并 打开一个网址"""    
-        t = self.browser.new_tab(url)    
-        return f'{t.title} {t.tab_id} {t.url} 已经打开'
+        tab = self.browser.new_tab(url)    
+        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
     
     def wait(self, a:int) -> Any:
         """等待a秒"""
         self.browser.latest_tab.wait(a)
         return f"等待{a}秒成功"
     
-    def get(self,url:str)->str:
+    async def get(self,url:str)->str:
         """在当前标签页打开一个网址"""
         self.lastest_tab.get(url)
         tab=self.browser.latest_tab
-        return f'{tab.title} {tab.tab_id} {tab.url} 已经打开'
+        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
         
     
     #region 上传和下载
