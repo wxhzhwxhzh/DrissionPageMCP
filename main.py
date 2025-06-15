@@ -45,7 +45,8 @@ class DrissionPageMCP():
             dict: 浏览器信息
         """
         co = ChromiumOptions()
-        co.set_local_port(config.get("debug_port", 9222))
+        if config.get("debug_port"):
+            co.set_local_port(config["debug_port"])
         if config.get("browser_path"):
             co.set_browser_path(config["browser_path"])
         if config.get("headless", False):
