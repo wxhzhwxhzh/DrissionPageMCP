@@ -72,7 +72,8 @@ class DrissionPageMCP():
     async def get(self,url:str)->str:
         """在当前标签页打开一个网址"""
         if not  self.browser:
-            return "请先打开或者连接浏览器"
+            await self.connect_or_open_browser()
+            # return "请先打开或者连接浏览器"
         self.lastest_tab.get(url)
         tab=self.browser.latest_tab
         return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
