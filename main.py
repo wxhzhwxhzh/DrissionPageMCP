@@ -36,10 +36,10 @@ class DrissionPageMCP():
     def get_version(self)-> str:
         """ 获取版本号"""
         return "1.0.3"
-    async def connect_or_open_browser(self, config: dict) -> dict:
+    async def connect_or_open_browser(self, config: dict={'debug_port':9222}) -> dict:
         """
         用DrissionPage 打开或接管已打开的浏览器，参数通过字典传递。
-        参数:
+        必要参数:
             config (dict): 可选键包括 、debug_port、browser_path、headless
         返回:
             dict: 浏览器信息
@@ -71,6 +71,8 @@ class DrissionPageMCP():
     
     async def get(self,url:str)->str:
         """在当前标签页打开一个网址"""
+        if not  self.browser:
+            return "请先打开或者连接浏览器"
         self.lastest_tab.get(url)
         tab=self.browser.latest_tab
         return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
