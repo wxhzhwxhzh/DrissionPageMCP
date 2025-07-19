@@ -8,3 +8,7 @@ dependencies = [
     "drissionpage>=4.1.0.18",
     "fastmcp>=2.4.0",
 ]
+
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"

@@ -65,7 +65,7 @@ class DrissionPageMCP():
         tab = self.browser.new_tab(url)    
         return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
     
-    def wait(self, a:int) -> Any:
+    def wait(self, a:int) :
         """等待a秒"""
         self.browser.latest_tab.wait(a)
         return f"等待{a}秒成功"
@@ -149,7 +149,7 @@ class DrissionPageMCP():
         result = {"locator": locator, "element": str(element), "click_result": element.click()}
         return result
     
-    def click_by_containing_text(self, content: str, index: int = None) -> any:
+    def click_by_containing_text(self, content: str, index: int = None) :
         """
         根据包含指定文本的方式点击网页元素。
         
@@ -185,7 +185,7 @@ class DrissionPageMCP():
   
         
     
-    def input_by_xapth(self, xpath: str, input_value: str, clear_first: bool = True) -> Any:
+    def input_by_xapth(self, xpath: str, input_value: str, clear_first: bool = True) :
         """通过xpath给当前标签页中某个元素输入内容，最好先判断元素是否存在
         
         Args:
@@ -209,7 +209,7 @@ class DrissionPageMCP():
         tab = self.browser.latest_tab
         body_text = tab('t:body').text
         return body_text
-    def run_js(self, js_code: str) -> Any:
+    def run_js(self, js_code: str) :
         """
         在当前标签页中运行JavaScript代码并返回执行结果
         查找网页元素，获取元素信息，操作网页元素优先使用这个方法
@@ -233,7 +233,7 @@ class DrissionPageMCP():
         result = tab.run_js(js_code)
         return result
     
-    def run_cdp( self,cmd, **cmd_args) -> Any:
+    def run_cdp( self,cmd, **cmd_args) :
         """在当前标签页中运行谷歌CDP协议代码并获取结果
         
         Args:
@@ -250,7 +250,7 @@ class DrissionPageMCP():
         """
         result=self.browser.latest_tab.run_cdp(cmd, **cmd_args)
         return result
-    def listen_cdp_event(self,event_name: str) -> any:
+    def listen_cdp_event(self,event_name: str) :
         """设置监听CDP事件
         
          应该先运行cdp  命令 激活对应的域，比如  Network.enable
@@ -309,7 +309,7 @@ class DrissionPageMCP():
             "video/ogg"
         ],
         url_include: str = "."        
-    ) -> any:
+    ) :
         '''
         开启一个新的标签页，设置监听，访问tab_url,
         tab_url: 被监听的标签页的url
