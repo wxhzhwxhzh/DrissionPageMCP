@@ -60,7 +60,8 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
       "args": [
         "run",
         "D:\\test10\\DrssionPageMCP\\main.py"
-      ]
+      ],
+      "cwd": "D:\\test10\\DrssionPageMCP"
     }
   }
 }
@@ -73,7 +74,8 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
       "args": [
         "run",
         "D:\\test10\\DrssionPageMCP\\main.py"
-      ]
+      ],
+      "cwd": "D:\\test10\\DrssionPageMCP"
     } 
 ```
 
