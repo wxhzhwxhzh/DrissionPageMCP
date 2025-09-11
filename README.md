@@ -59,23 +59,23 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
       "command": "uv",
       "args": [
         "run",
-        "D:\\test10\\DrssionPageMCP\\main.py"
+        "D:\\test10\\DrissionPageMCP\\main.py"
       ],
-      "cwd": "D:\\test10\\DrssionPageMCP"
+      "cwd": "D:\\test10\\DrissionPageMCP"
     }
   }
 }
 ```
 新增mcp配置 ，填写下面的配置：
 ``` json
-"DrssionPageMCP": {
+"DrissionPageMCP": {
       "type": "stdio",
       "command": "uv",
       "args": [
         "run",
-        "D:\\test10\\DrssionPageMCP\\main.py"
+        "D:\\test10\\DrissionPageMCP\\main.py"
       ],
-      "cwd": "D:\\test10\\DrssionPageMCP"
+      "cwd": "D:\\test10\\DrissionPageMCP"
     } 
 ```
 

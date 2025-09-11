@@ -33,14 +33,9 @@ class DrissionPageMCP():
 
     def test(self):
         return "test"
-    def get_DrissionPage_code_guide(self)-> str:
-        """ 获取 DrissionPage 代码指南"""
-        with open(Path(__file__).parent / "DrissionPage_code_guide.md", "r", encoding="utf-8") as f:
-            return f.read()
-        # return "1.0.3"
     def get_version(self)-> str:
         """ 获取版本号"""
-        return "1.0.4"
+        return "1.0.3"
     async def connect_or_open_browser(self, config: dict={'debug_port':9222}) -> dict:
         """
         用DrissionPage 打开或接管已打开的浏览器，参数通过字典传递。
@@ -64,31 +59,16 @@ class DrissionPageMCP():
             "browser_address": self.browser._chromium_options.address,
             "latest_tab_title": tab.title,
             "latest_tab_id": tab.tab_id,
-            "等价Python代码":f'''
-from DrissionPage import Chromium, ChromiumOptions
-form DrissionPage.common import Keys
-# 创建配置对象
-co = ChromiumOptions()
-co.set_local_port({config["debug_port"]})
-# 创建浏览器对象，浏览器对象不能打开网址，只有标签页对象才能打开网址
-browser = Chromium(co)
-# 获取最新标签页
-tab = browser.latest_tab
-'''
         }
-    
     async def new_tab(self, url: str) -> str:
         """用DrissionPage 控制的浏览器,打开新标签页并 打开一个网址"""    
         tab = self.browser.new_tab(url)    
-        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree(),
-               "等价Python代码":f'''
-tab = browser.new_tab({url})
-''' }
+        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
     
     def wait(self, a:int) :
         """等待a秒"""
         self.browser.latest_tab.wait(a)
-        return {"rsult":f"等待{a}秒成功", "等价Python代码":f"tab.wait({a})"}
+        return f"等待{a}秒成功"
     
     async def get(self,url:str)->str:
         """在当前标签页打开一个网址"""
@@ -97,8 +77,7 @@ tab = browser.new_tab({url})
             # return "请先打开或者连接浏览器"
         self.lastest_tab.get(url)
         tab=self.browser.latest_tab
-        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree(),"等价Python代码":f'''tab.get({url})'''}
-
+        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree()}
         
     
     #region 上传和下载
@@ -148,7 +127,7 @@ tab = browser.new_tab({url})
         tab = self.browser.latest_tab
         try:
             result = tab.actions.type(Keys.ENTER)
-            return {"result":f'{tab.title} 网页发送 enter 回车键成功', "等价Python代码":f"tab.actions.type(Keys.ENTER)"}
+            return f"{tab.title} 网页发送 enter 回车键成功"
         except Exception as e:
             return f"{tab.title} 网页发送 enter 回车键失败"
         
@@ -167,7 +146,7 @@ tab = browser.new_tab({url})
         
         locator = f"xpath:{xpath}"
         element = self.browser.latest_tab.ele(locator, timeout=3)
-        result = {"locator": locator, "element": str(element), "click_result": element.click(), "等价Python代码":f"tab.ele({locator}, timeout=3).click()"}
+        result = {"locator": locator, "element": str(element), "click_result": element.click()}
         return result
     
     def click_by_containing_text(self, content: str, index: int = None) :
@@ -219,7 +198,7 @@ tab = browser.new_tab({url})
         """
         locator = f"xpath:{xpath}"
         if e := self.browser.latest_tab.ele(locator, timeout=4):
-            result = {"locator": locator, "result": e.input(input_value, clear=clear_first), "等价Python代码":f"tab.ele({locator}, timeout=4).input({input_value}, clear={clear_first})"}
+            result = {"locator": locator, "result": e.input(input_value, clear=clear_first)}
             return result
         else:
             return f"元素{locator}不存在，需要getInputElementsInfo先获取元素信息"
@@ -229,8 +208,7 @@ tab = browser.new_tab({url})
         
         tab = self.browser.latest_tab
         body_text = tab('t:body').text
-        r={"body_text":body_text,"等价Python代码":f"tab('t:body').text"}
-        return r
+        return body_text
     def run_js(self, js_code: str) :
         """
         在当前标签页中运行JavaScript代码并返回执行结果
@@ -253,9 +231,7 @@ tab = browser.new_tab({url})
         """
         tab = self.browser.latest_tab
         result = tab.run_js(js_code)
-        r={"result":result,"等价Python代码":f"r=tab.run_js({js_code})"}
-        return r
-        
+        return result
     
     def run_cdp( self,cmd, **cmd_args) :
         """在当前标签页中运行谷歌CDP协议代码并获取结果
@@ -485,7 +461,6 @@ mcp = FastMCP("DrissionPageMCP", log_level="ERROR",instructions=提示)
 b=DrissionPageMCP()
 
 mcp.add_tool(b.get_version)
-mcp.add_tool(b.get_DrissionPage_code_guide)
 mcp.add_tool(b.connect_or_open_browser)
 mcp.add_tool(b.new_tab)
 mcp.add_tool(b.wait)
