@@ -1,7 +1,7 @@
 
 # DrissionPage 使用教程
 
-> 📌 DrissionPage® 是一个基于 Python 的网页自动化工具,能控制浏览器,功能强大，语法简洁优雅，代码量少，对新手友好.支持：Chromium 内核浏览器（如 Chrome 和 Edge）
+ 📌 DrissionPage® 是一个基于 Python 的网页自动化工具,能控制浏览器,功能强大，语法简洁优雅，代码量少，对新手友好.支持：Chromium 内核浏览器（如 Chrome 和 Edge）
 
 ---
 
@@ -11,7 +11,6 @@
 pip install -U DrissionPage
 ```
 
-如需使用浏览器功能，请安装对应的浏览器驱动（如 ChromeDriver）并确保版本匹配。
 
 ---
 
@@ -35,9 +34,10 @@ co.set_local_port('9222')
 # 设置浏览器路径，不设置则默认是谷歌浏览器
 co.set_browser_path(r'C:\chrome.exe')
 
-# 创建浏览器对象
+# 创建浏览器实例，浏览器实例不能直接打开网页
 browser = Chromium(co)
-tab = browser.latest_tab
+
+tab = browser.latest_tab #获取标签页实例，标签页实例可以直接get打开网页
 
 #访问网页..
 tab.get("https://www.baidu.com/")
