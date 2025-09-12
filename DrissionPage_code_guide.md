@@ -1,5 +1,5 @@
 
-# DrissionPage 使用教程
+# DrissionPage 代码语法规范指南教程
 
  📌 DrissionPage® 是一个基于 Python 的网页自动化工具,能控制浏览器,功能强大，语法简洁优雅，代码量少，对新手友好.支持：Chromium 内核浏览器（如 Chrome 和 Edge）
 
