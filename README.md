@@ -35,7 +35,8 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 - uv
 
 ## 安装说明
-把本仓库git clone到本地，核心文件是main.py：
+- 把本仓库git clone到本地，核心文件是main.py：
+- 首先要进行[💖MCP安装环境准备工作](./MCP安装教程.md)
 
 ### 安装到Cursor编辑器
 
