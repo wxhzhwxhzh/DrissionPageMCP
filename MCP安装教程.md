@@ -53,3 +53,6 @@ uv run main.py
   }
 }
 ```
+
+## 如何找到MCP配置文件  
+[查看帮助](./README.md)
