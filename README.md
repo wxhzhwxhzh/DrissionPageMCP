@@ -55,14 +55,10 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 ```json
 {
   "mcpServers": {
-    "DrssionPageMCP": {
+    "DrissionPageMCP": {
       "type": "stdio",
       "command": "uv",
-      "args": [
-        "run",
-        "D:\\test10\\DrissionPageMCP\\main.py"
-      ],
-      "cwd": "D:\\test10\\DrissionPageMCP"
+      "args": ["--directory", "D:\\test10\\DrissionPageMCP", "run", "main.py"]
     }
   }
 }
@@ -72,11 +68,7 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 "DrissionPageMCP": {
       "type": "stdio",
       "command": "uv",
-      "args": [
-        "run",
-        "D:\\test10\\DrissionPageMCP\\main.py"
-      ],
-      "cwd": "D:\\test10\\DrissionPageMCP"
+      "args": ["--directory", "D:\\test10\\DrissionPageMCP", "run", "main.py"]
     } 
 ```
 
@@ -91,11 +83,11 @@ DrissionPage MCP  是一个基于 DrissionPage 和 FastMCP 的浏览器自动化
 
 调试
 ```
-npx -y @modelcontextprotocol/inspector uv run D:\\test10\\DrssionPageMCP\\main.py
+npx -y @modelcontextprotocol/inspector uv run D:\\test10\\DrissionPageMCP\\main.py
 ```
 或者
 ```
-mcp dev  D:\\test10\\DrssionPageMCP\\main.py
+mcp dev  D:\\test10\\DrissionPageMCP\\main.py
 ```
 
 ## 更新日志
