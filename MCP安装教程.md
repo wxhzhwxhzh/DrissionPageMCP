@@ -45,7 +45,7 @@ uv run main.py
 ```json
 {
   "mcpServers": {
-    "DrssionPageMCP": {
+    "DrissionPageMCP": {
       "type": "stdio",
       "command": "uv",
       "args": ["--directory", "D:\\test4\\DrissionPageMCP", "run", "main.py"]
