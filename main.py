@@ -82,7 +82,7 @@ tab = browser.latest_tab
         tab = self.browser.new_tab(url)    
         return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree(),
                "等价Python代码":f'''
-tab = browser.new_tab({url})
+tab = browser.new_tab('{url}')
 ''' }
     
     def wait(self, a:int) :
@@ -97,7 +97,7 @@ tab = browser.new_tab({url})
             # return "请先打开或者连接浏览器"
         self.lastest_tab.get(url)
         tab=self.browser.latest_tab
-        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree(),"等价Python代码":f'''tab.get({url})'''}
+        return {"title": tab.title, "tab_id": tab.tab_id, "url": tab.url,"dom":self.getSimplifiedDomTree(),"等价Python代码":f'''tab.get('{url}')'''}
 
         
     
@@ -167,7 +167,7 @@ tab = browser.new_tab({url})
         
         locator = f"xpath:{xpath}"
         element = self.browser.latest_tab.ele(locator, timeout=3)
-        result = {"locator": locator, "element": str(element), "click_result": element.click(), "等价Python代码":f"tab.ele({locator}, timeout=3).click()"}
+        result = {"locator": locator, "element": str(element), "click_result": element.click(), "等价Python代码":f"tab.ele('{locator}', timeout=3).click()"}
         return result
     
     def click_by_containing_text(self, content: str, index: int = None) :
@@ -219,7 +219,7 @@ tab = browser.new_tab({url})
         """
         locator = f"xpath:{xpath}"
         if e := self.browser.latest_tab.ele(locator, timeout=4):
-            result = {"locator": locator, "result": e.input(input_value, clear=clear_first), "等价Python代码":f"tab.ele({locator}, timeout=4).input({input_value}, clear={clear_first})"}
+            result = {"locator": locator, "result": e.input(input_value, clear=clear_first), "等价Python代码":f"tab.ele('{locator}', timeout=4).input({input_value}, clear={clear_first})"}
             return result
         else:
             return f"元素{locator}不存在，需要getInputElementsInfo先获取元素信息"
@@ -253,7 +253,7 @@ tab = browser.new_tab({url})
         """
         tab = self.browser.latest_tab
         result = tab.run_js(js_code)
-        r={"result":result,"等价Python代码":f"r=tab.run_js({js_code})"}
+        r={"result":result,"等价Python代码":f"r=tab.run_js('{js_code}')"}
         return r
         
     
