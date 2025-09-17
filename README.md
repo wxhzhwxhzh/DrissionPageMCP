@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/wxhzhwxhzh-drssionpagemcp-badge.png)](https://mseep.ai/app/wxhzhwxhzh-drssionpagemcp)
+
 # DrissionPage MCP Server -- 骚神出品
 
 基于DrissionPage和FastMCP的浏览器自动化MCP服务器，提供丰富的浏览器操作API供AI调用。
