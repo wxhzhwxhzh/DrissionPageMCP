@@ -40,7 +40,7 @@ class DrissionPageMCP():
         # return "1.0.3"
     def get_version(self)-> str:
         """ 获取版本号"""
-        return "1.0.4"
+        return "1.0.5"
     async def connect_or_open_browser(self, config: dict={'debug_port':9222}) -> dict:
         """
         用DrissionPage 打开或接管已打开的浏览器，参数通过字典传递。
@@ -434,13 +434,21 @@ tab = browser.new_tab('{url}')
         except Exception as e:
             return f"{tab.title} 网页发送 {key} 键失败"
     
-    def getSimplifiedDomTree(self) -> dict:
+    def getSimplifiedDomTree2(self) -> dict:
         """获取当前标签页的简化版DOM树"""
         from CodeBox import domTreeToJson
         tab = self.browser.latest_tab
         dom_tree = tab.run_js(domTreeToJson)
         return dom_tree
- 
+    
+    def getSimplifiedDomTree(self):
+        tab=self.browser.latest_tab
+        tab.run_cdp('Accessibility.enable')
+        tree = tab.run_cdp('Accessibility.getFullAXTree')
+        tempAXTree = AXTreeFormatter(tree)
+        tempAXTree.parse_tree()
+        return tempAXTree.all_data
+    
     #region 拖动
 
     def move_to(self,xpath:str) -> dict:
@@ -479,6 +487,130 @@ tab = browser.new_tab('{url}')
             return result
         else:
             return f"元素{xpath}不存在，需要getSimplifiedDomTree先获取元素信息"
+
+#region AXtree
+class AXTreeFormatter:
+    def __init__(self, raw_data):
+        self.nodes_map = {}
+        self.root_id = None
+        self._build_lookup(raw_data.get('nodes', []))
+        self.all_data = ""
+
+    def _build_lookup(self, nodes_list):
+        all_child_ids = set()
+        
+        for node in nodes_list:
+            self.nodes_map[node['nodeId']] = node
+            if 'childIds' in node:
+                for child_id in node['childIds']:
+                    all_child_ids.add(child_id)
+
+        for node_id in self.nodes_map:
+            if node_id not in all_child_ids:
+                self.root_id = node_id
+                break
+
+    def _get_value(self, obj, key):
+        """获取属性值"""
+        if not obj: 
+            return None
+        target = obj.get(key)
+        if isinstance(target, dict) and 'value' in target:
+            return target['value']
+        return target
+
+    def _get_properties(self, node):
+        """提取 tagName, id, class"""
+        result = {}
+        properties = node.get('properties', [])
+        
+        for prop in properties:
+            name = prop.get('name')
+            value = prop.get('value', {})
+            
+            if isinstance(value, dict):
+                prop_value = value.get('value')
+            else:
+                prop_value = value
+            
+            # 只提取我们关心的属性
+            if name in ['htmlTag', 'id', 'class']:
+                result[name] = prop_value
+        
+        return result
+
+    def _format_node(self, node):
+        """格式化节点信息"""
+        role = self._get_value(node, 'role') or "Unknown"
+        name = self._get_value(node, 'name') or ""
+        
+        props = self._get_properties(node)
+        tag = props.get('htmlTag', '')
+        node_id = props.get('id', '')
+        node_class = props.get('class', '')
+        
+        # 构建简洁的输出 - 优先显示 HTML 标签
+        parts = []
+        
+        if tag:
+            # 如果有标签名，就显示标签，role 放在后面（可选）
+            parts.append(f"<{tag}>")
+            # 如果 role 不是 generic，也显示出来
+            if role != 'generic':
+                parts.append(f"[{role}]")
+        else:
+            # 没有标签就显示 role
+            parts.append(role)
+        
+        if node_id:
+            parts.append(f"#{node_id}")
+        
+        if node_class:
+            # class 太长就截断
+            if len(node_class) > 40:
+                node_class = node_class[:37] + "..."
+            parts.append(f".{node_class}")
+        
+        if name:
+            # 文本内容太长就截断
+            if len(name) > 50:
+                name = name[:47] + "..."
+            parts.append(f'"{name}"')
+        
+        return " ".join(parts)
+
+    def print_tree(self, node_id=None, level=0):
+        if node_id is None:
+            node_id = self.root_id
+
+        node = self.nodes_map.get(node_id)
+        if not node:
+            return
+
+        indent = "  " * level
+        self.all_data += f"{indent}- {self._format_node(node)}\n"
+
+        # 递归子节点
+        for child_id in node.get('childIds', []):
+            self.print_tree(child_id, level + 1)
+    def parse_tree(self, node_id=None, level=0):
+        if node_id is None:
+            node_id = self.root_id
+
+        node = self.nodes_map.get(node_id)
+        if not node:
+            return
+
+        indent = "  " * level
+        self.all_data += f"{indent}- {self._format_node(node)}\n"
+
+        # 递归子节点
+        for child_id in node.get('childIds', []):
+            self.parse_tree(child_id, level + 1)
+
+
+
+
 
 #region 初始化mcp
 mcp = FastMCP("DrissionPageMCP", log_level="ERROR",instructions=提示)
