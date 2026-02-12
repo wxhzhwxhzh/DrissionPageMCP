@@ -1,4 +1,9 @@
+
 # DrissionPage MCP Server -- 骚神出品
+![](https://img.shields.io/badge/python-3.9-brightgreen)
+![](https://img.shields.io/github/watchers/wxhzhwxhzh/DrissionPageMCP?style=social)
+![](https://img.shields.io/github/stars/wxhzhwxhzh/DrissionPageMCP?style=social)
+![](https://img.shields.io/github/forks/wxhzhwxhzh/DrissionPageMCP?style=social)
 
 基于DrissionPage和FastMCP的浏览器自动化MCP服务器，提供丰富的浏览器操作API供AI调用。
 
